@@ -1,3 +1,5 @@
+import pandas as pd
+import joblib
 
 
 sample_user_data = {
@@ -6,7 +8,7 @@ sample_user_data = {
     "diet": "omnivore",
     "shower": "daily",
     "heatingSource": "electricity",
-    "transport": "public transit",
+    "transport": "public",
     "vehicleType": "hybrid",
     "socialActivity": "moderate",
     "monthlyGroceryBill": 350,
@@ -51,6 +53,15 @@ def processing(user_data):
 
 
 if __name__ == '__main__':
-    encoded_data = processing(sample_user_data)
-    print(encoded_data)
+    data = processing(sample_user_data)
+    print(f'data is {data}')
+    input_data = [[data[key] for key in data.keys()]]
+    print(f'input_data: {input_data}')
+    model = joblib.load('/Users/rushildileep/Documents/Carbon-Emission-Datathon/data/gradboostreg_carbon.joblib')
+    prediction = model.predict(input_data)[0]
+    print(prediction)
+    
 
+
+
+#8377, 9000/10
