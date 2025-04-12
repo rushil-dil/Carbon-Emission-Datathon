@@ -1,8 +1,9 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 
 app = Flask(__name__)
-
+CORS(app)
 
 @app.route("/")
 def home():
@@ -19,7 +20,7 @@ def submit():
 
     # send a json file back to frontend with json received + extra data
 
-    return jsonify({"result"})
+    return jsonify({"result": 12})
 
 
 if __name__ == '__main__':
