@@ -1,40 +1,126 @@
+"use client";
+import { cn } from "@/lib/utils";
+import { useMotionValue, motion, useMotionTemplate } from "motion/react";
+import React from "react";
 
-import Link from "next/link"
+export const HeroHighlight = ({
+  children,
+  className,
+  containerClassName
+}) => {
+  let mouseX = useMotionValue(0);
+  let mouseY = useMotionValue(0);
 
-export default function Hero() {
-    return (
-      <section className="w-full pt-12 md:pt-24 lg:pt-32">
-        <div className="container space-y-10 xl:space-y-16">
-          <div className="grid gap-4 px-10 md:grid-cols-2 md:gap-16">
-            <div>
-              <h1 className="lg:leading-tighter text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-[3.4rem] 2xl:text-[3.75rem]">
-                The complete platform for building the Web
-              </h1>
-            </div>
-            <div className="flex flex-col items-start space-y-4">
-              <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
-                Beautifully designed components that you can copy and paste into your apps. Accessible. Customizable. Open
-                Source.
-              </p>
-              <div className="space-x-4">
-                <Link
-                  href="#"
-                  className="inline-flex h-9 items-center justify-center rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-gray-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300"
-                  prefetch={false}
-                >
-                  Get Started
-                </Link>
-              </div>
-            </div>
-          </div>
-          <img
-            src="/placeholder.svg"
-            width="1270"
-            height="300"
-            alt="Hero"
-            className="mx-auto aspect-[3/1] overflow-hidden rounded-t-xl object-cover"
-          />
-        </div>
-      </section>
-    )
-}
+  // SVG patterns for different states and themes
+  const dotPatterns = {
+    light: {
+      default: `url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='16' height='16' fill='none'%3E%3Ccircle fill='%23d4d4d4' id='pattern-circle' cx='10' cy='10' r='2.5'%3E%3C/circle%3E%3C/svg%3E")`,
+      hover: `url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='16' height='16' fill='none'%3E%3Ccircle fill='%236366f1' id='pattern-circle' cx='10' cy='10' r='2.5'%3E%3C/circle%3E%3C/svg%3E")`,
+    },
+    dark: {
+      default: `url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='16' height='16' fill='none'%3E%3Ccircle fill='%23404040' id='pattern-circle' cx='10' cy='10' r='2.5'%3E%3C/circle%3E%3C/svg%3E")`,
+      hover: `url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='16' height='16' fill='none'%3E%3Ccircle fill='%238183f4' id='pattern-circle' cx='10' cy='10' r='2.5'%3E%3C/circle%3E%3C/svg%3E")`,
+    },
+  };
+
+  function handleMouseMove({
+    currentTarget,
+    clientX,
+    clientY
+  }) {
+    if (!currentTarget) return;
+    let { left, top } = currentTarget.getBoundingClientRect();
+
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+  }
+  return (
+    <div
+      className={cn(
+        "group relative flex h-[40rem] w-full items-center justify-center bg-white dark:bg-black",
+        containerClassName
+      )}
+      onMouseMove={handleMouseMove}>
+      <div
+        className="pointer-events-none absolute inset-0 dark:hidden"
+        style={{
+          backgroundImage: dotPatterns.light.default,
+        }} />
+      <div
+        className="pointer-events-none absolute inset-0 hidden dark:block"
+        style={{
+          backgroundImage: dotPatterns.dark.default,
+        }} />
+      <motion.div
+        className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100 dark:hidden"
+        style={{
+          backgroundImage: dotPatterns.light.hover,
+          WebkitMaskImage: useMotionTemplate`
+            radial-gradient(
+              200px circle at ${mouseX}px ${mouseY}px,
+              black 0%,
+              transparent 100%
+            )
+          `,
+          maskImage: useMotionTemplate`
+            radial-gradient(
+              200px circle at ${mouseX}px ${mouseY}px,
+              black 0%,
+              transparent 100%
+            )
+          `,
+        }} />
+      <motion.div
+        className="pointer-events-none absolute inset-0 hidden opacity-0 transition duration-300 group-hover:opacity-100 dark:block"
+        style={{
+          backgroundImage: dotPatterns.dark.hover,
+          WebkitMaskImage: useMotionTemplate`
+            radial-gradient(
+              200px circle at ${mouseX}px ${mouseY}px,
+              black 0%,
+              transparent 100%
+            )
+          `,
+          maskImage: useMotionTemplate`
+            radial-gradient(
+              200px circle at ${mouseX}px ${mouseY}px,
+              black 0%,
+              transparent 100%
+            )
+          `,
+        }} />
+      <div className={cn("relative z-20", className)}>{children}</div>
+    </div>
+  );
+};
+
+export const Highlight = ({
+  children,
+  className
+}) => {
+  return (
+    <motion.span
+      initial={{
+        backgroundSize: "0% 100%",
+      }}
+      animate={{
+        backgroundSize: "100% 100%",
+      }}
+      transition={{
+        duration: 2,
+        ease: "linear",
+        delay: 0.5,
+      }}
+      style={{
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "left center",
+        display: "inline",
+      }}
+      className={cn(
+        `relative inline-block rounded-lg bg-gradient-to-r from-indigo-300 to-purple-300 px-1 pb-1 dark:from-indigo-500 dark:to-purple-500`,
+        className
+      )}>
+      {children}
+    </motion.span>
+  );
+};
