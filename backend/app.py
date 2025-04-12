@@ -9,19 +9,21 @@ def home():
     pass
 
 
-@app.route('/api/submit', methods=['POST'])
+@app.route('/submit', methods=['POST'])
 def submit():
+    # data is json given from frontend
     data = request.get_json()
-    user_input = data.get('user_input')
 
-    # Process input (e.g., call a model or function)
-    result = f"Processed: {user_input}"
+    # use model here
+    # possible preprocess the model here
 
-    return jsonify({"result": result})
+    # send a json file back to frontend with json received + extra data
+
+    return jsonify({"result"})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
 
 
 
-    
