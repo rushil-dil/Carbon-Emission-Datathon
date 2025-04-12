@@ -7,14 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 import useSubmitSurvey from '@/api/api';  
-const router = useRouter();
 
-useEffect(() => {
-    if (response) {
-      // Redirect to a results or insights page
-      router.push(`/insights/${response.id}`);  // or `/results`, or whatever
-    }
-  }, [response, router]);
 const questions = [
     {
       id: 'bodyType',
@@ -130,6 +123,32 @@ const questions = [
     const [currentQuestion, setCurrentQuestion] = useState(0);
     const [answers, setAnswers] = useState({});
     const { submitSurvey, isLoading, error, response } = useSubmitSurvey();  // Hook for submission
+    const router = useRouter();
+    // useEffect(() => {
+    //     if (response) {
+    //       // Redirect to a results or insights page
+    //       router.push(`/resposne`);  // or `/results`, or whatever
+    //     }
+    //   }, [response, router]);
+    //   useEffect(() => {
+    //     // Check if there's a cached response
+    //     const cachedResponse = localStorage.getItem('surveyResponse');
+    //     if (cachedResponse) {
+    //       // If cached, redirect to the response page directly
+    //       router.push(`/response`);
+    //     }
+    //   }, [router]);
+    
+      // Submit handler
+      useEffect(() => {
+        if (response) {
+          // Cache the response data
+          localStorage.setItem('surveyResponse', JSON.stringify(response));
+          // Redirect to the response page
+          router.push(`/response`);
+        }
+      }, [response, router]);
+    
   
     const handleNext = () => {
       if (currentQuestion < questions.length - 1) {
@@ -166,12 +185,20 @@ const questions = [
     };
   
     const handleSubmit = async () => {
-      try {
-        await submitSurvey(answers);  // Submit the answers to the backend
-      } catch (err) {
-        console.error('Error submitting survey:', err);
-      }
-    };
+        try {
+          const result = await submitSurvey(answers);
+          
+          // Store the response in localStorage
+          if (result) {
+            localStorage.setItem('surveyResponse', JSON.stringify(result));
+            router.push('/response');
+            console.log(result)
+          }
+        } catch (err) {
+          console.error('Error submitting survey:', err);
+          setError(err.message || 'Failed to submit survey');
+        }
+      };
   
     const question = questions[currentQuestion];
     const answer = answers[question.id];
