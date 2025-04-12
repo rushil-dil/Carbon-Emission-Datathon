@@ -4,13 +4,14 @@ const useSubmitSurvey = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [response, setResponse] = useState(null);
+  const API_URL= "http://localhost:5000"
 
   const submitSurvey = async (data, onSuccess) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const res = await fetch('/api/submit', {
+      const res = await fetch(API_URL + '/api/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

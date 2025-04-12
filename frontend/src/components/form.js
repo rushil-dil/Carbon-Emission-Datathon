@@ -3,11 +3,21 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import useSubmitSurvey from '@/api/api';  
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
+import useSubmitSurvey from '@/api/api';  
+const router = useRouter();
+
+useEffect(() => {
+    if (response) {
+      // Redirect to a results or insights page
+      router.push(`/insights/${response.id}`);  // or `/results`, or whatever
+    }
+  }, [response, router]);
 const questions = [
     {
-      id: 'bodytype',
+      id: 'bodyType',
       label: 'What\'s your body type?',
       options: ['underweight', 'normal', 'overweight', 'obese'],
       type: 'select',
@@ -31,7 +41,7 @@ const questions = [
       type: 'select',
     },
     {
-      id: 'heating source',
+      id: 'heatingSource',
       label: 'What energy source do you use for heating?',
       options: ['coal', 'natural gas', 'wood', 'electricity'],
       type: 'select',
@@ -45,7 +55,7 @@ const questions = [
     {
       id: 'vehicleType',
       label: 'What type of vehicle do you use (if any)?',
-      options: ['petrol', 'diesel', 'hybrid', 'electric', 'none (if public/bike/walk)'],
+      options: ['petrol', 'diesel', 'hybrid', 'electric', 'none', 'lpg'],
       type: 'select',
     },
     {
@@ -68,8 +78,7 @@ const questions = [
     {
       id: 'vehicleDistance',
       label: 'What is the average distance you drive per month (km)?',
-      options: ['0-100', '101-500', '501-1000', '1001-5000', '5000+'],
-      type: 'select',
+      type: 'input',
     },
     {
       id: 'wasteBagSize',
@@ -80,26 +89,22 @@ const questions = [
     {
       id: 'wasteBagWeeklyCount',
       label: 'How many waste bags do you throw away per week?',
-      options: ['1', '2', '3', '4', '5+', '6+'],
-      type: 'select',
+      type: 'input',
     },
     {
       id: 'tvPcDailyHour',
       label: 'How many hours a day do you spend on TV or PC?',
-      options: ['0-3', '4-7', '8-14', '15-20', '20+'],
-      type: 'select',
+      type: 'input',
     },
     {
       id: 'newClothesMonthly',
       label: 'How many new clothes do you buy per month?',
-      options: ['0', '1', '2-5', '6-10', '10+'],
-      type: 'select',
+      type: 'input',
     },
     {
       id: 'internetDailyHour',
       label: 'How many hours a day do you spend on the internet?',
-      options: ['0-5', '6-10', '11-15', '16-20', '20+'],
-      type: 'select',
+      type: 'input',
     },
     {
       id: 'energyEfficiency',
