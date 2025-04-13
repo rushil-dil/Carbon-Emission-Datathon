@@ -5,11 +5,9 @@ import pandas as pd
 import joblib
 
 
-<<<<<<< HEAD
-=======
 
 
->>>>>>> 8e5ed06074f56ac307798553453c536ca7d38943
+
 app = Flask(__name__)
 CORS(app)
 
