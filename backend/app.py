@@ -15,6 +15,21 @@ def get_prediction(model, input_dict):
     prediction = model.predict(input_data)[0]
     return float("{:.2f}".format(prediction))
 
+def transportation_details(distance, v_type):
+    match v_type:
+        case 'none':
+            return 0
+        case 'electric':
+            return 0.124*distance
+        case 'petrol':
+            return 0.25*distance
+        case 'diesel':
+            return 0.19*distance
+        case 'hybrid':
+            return 0.143*distance
+        case 'lpg':
+            return 0.21*distance
+        
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -27,9 +42,15 @@ def submit():
     return jsonify({"result": prediction})
 
 
-@app.route('/emission_estimate', methods=['POST'])
-def emission_estimate():
-    pass
+@app.route('/breakdown', methods=['POST'])
+def breakdown():
+    data = request.get_json()
+    electricity = data['tvPcDailyHour'] * 0.81 * 30
+    shopping = data['newClothesMonthly'] * 7
+    transportation = transportation_details(data['vehicleDistance'], data['vehicleType'])
+    
+    food = data['monthlyGroceryBill'] * 0.1
+    return jsonify({'electricity': electricity, 'shopping': shopping, 'transportation': transportation, 'food': food})
 
 if __name__ == '__main__':
     app.run(debug=True)
