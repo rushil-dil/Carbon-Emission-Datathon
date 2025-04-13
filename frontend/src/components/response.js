@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/componen
 import { Button } from '@/components/ui/button';
 import { HeroHighlight, Highlight } from './hero';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, ComposedChart, ReferenceLine, ReferenceArea } from 'recharts';
-
+import { useCohereGenerate } from '@/api/api';
 const getIntervalForValue = (value) => {
   const intervals = [
     [0, 900],
@@ -35,11 +35,15 @@ export function CarbonFootprintDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   const [answerData, setAnswerData] = useState(null);
   const [graphData, setGraphData] = useState(null);
+  const { generateTips, output: tipsData, loading: tipsLoading } = useCohereGenerate();
+
   const router = useRouter();
+  
 
   useEffect(() => {
     const cachedResponse = localStorage.getItem('surveyResponse');
-    const cachedAnswers = localStorage.getItem('carbonSurveyAnswer');
+    const cachedAnswers = localStorage.getItem('carbonSurveyAnswers');
+    console.log(cachedAnswers)
 
     if (cachedResponse) {
       try {
@@ -54,6 +58,7 @@ export function CarbonFootprintDashboard() {
     if (cachedAnswers) {
       try {
         const parsedAnswers = JSON.parse(cachedAnswers);
+        console.log('Parsed answers', parsedAnswers)
         setAnswerData(parsedAnswers);
       } catch (error) {
         console.error('Error parsing survey answers:', error);
@@ -68,6 +73,35 @@ export function CarbonFootprintDashboard() {
       console.log('Updated responseData: ', responseData);
     }
   }, [responseData]);
+
+  useEffect(() => {
+    if (answerData && Object.keys(answerData).length > 0) {
+      console.log('Updated answerData: ', answerData);
+    }
+  }, [answerData]);
+
+
+useEffect(() => {
+    if (answerData) {
+      const formattedPrompt = `
+  You are a helpful assistant that gives actionable, eco-friendly tips based on user lifestyle data.
+  
+  Here is the user's data (in JSON format):
+  ${JSON.stringify(answerData, null, 2)}
+  
+  Based on this data, generate 5 personalized carbon footprint reduction tips as a list of strings, and provide a short summary sentence about the potential impact.
+  
+  Output the result as JSON with this format. (MAKE SURE TO STRICTLY FOLLOW The format with braces, and strings, needs to be a valid string):
+  {
+    "reductionTips": [ ... ],
+    "impactSummary": "..."
+  }
+      `;
+      console.log(answerData);
+      console.log('sending request to cohere');
+      generateTips(formattedPrompt);
+    }
+  }, [answerData]);
 
   useEffect(() => {
     if (responseData && Object.keys(responseData).length > 0) {
@@ -155,18 +189,11 @@ export function CarbonFootprintDashboard() {
     { name: 'National Avg', value: graphData.comparison.nationalAvg },
     { name: 'Global Avg', value: graphData.comparison.globalAvg },
   ];
-
-  const reductionTips = [
-    'Reduce meat consumption by having 2-3 plant-based days per week',
-    'Use public transportation, carpool, or bike when possible',
-    'Switch to energy-efficient appliances and LED lighting',
-    'Reduce single-use plastic consumption',
-    'Buy locally produced food and goods',
-  ];
+  
 
   const COLORS = ['#4CAF50', '#8BC34A', '#CDDC39', '#AFB42B'];
   const userInterval = getIntervalForValue(graphData.result);
-  console.log("userInterval:", userInterval)
+
   return (
     <div className="w-full max-w-6xl mx-auto mt-6 p-4">
       <div className="flex flex-col space-y-6">
@@ -260,7 +287,7 @@ export function CarbonFootprintDashboard() {
               <div className="mt-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-md border border-green-200 dark:border-green-800">
                 <h3 className="text-lg font-medium text-green-700 dark:text-green-300 mb-2">Environmental Impact</h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Your current footprint is equivalent to the carbon sequestered by approximately <span className="font-semibold text-green-600 dark:text-green-400">243 trees</span> growing for 10 years.
+                  Your current footprint is equivalent to the carbon sequestered by approximately <span className="font-semibold text-green-600 dark:text-green-400">{Math.floor(graphData.result/24.62)} trees</span> growing for 10 years.
                 </p>
               </div>
             </CardContent>
@@ -350,35 +377,33 @@ export function CarbonFootprintDashboard() {
           </Card>
         )}
 
-        {activeTab === 'tips' && (
-          <Card className="border border-green-200 dark:border-green-800 shadow-md">
-            <CardHeader className="bg-green-50 dark:bg-green-900/30">
-              <CardTitle className="text-green-700 dark:text-green-300">Carbon Reduction Tips</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <p className="mb-4 text-gray-600 dark:text-gray-400">
-                Based on your carbon profile, here are some personalized tips to reduce your carbon footprint:
-              </p>
-              <ul className="space-y-4">
-                {reductionTips.map((tip, index) => (
-                  <li key={index} className="flex items-start">
-                    <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 dark:bg-green-800 flex items-center justify-center text-green-600 dark:text-green-300 mr-3 mt-0.5">
-                      {index + 1}
-                    </div>
-                    <p className="text-gray-700 dark:text-gray-300">{tip}</p>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-md border border-green-200 dark:border-green-800">
-                <h3 className="text-lg font-medium text-green-700 dark:text-green-300 mb-2">Potential Impact</h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  By implementing these suggestions, you could potentially reduce your carbon footprint by <span className="font-semibold text-green-600 dark:text-green-400">25-30%</span> over the next year.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
+{activeTab === 'tips' && (
+  <Card className="border border-green-200 dark:border-green-800 shadow-md">
+    <CardHeader className="bg-green-50 dark:bg-green-900/30">
+      <CardTitle className="text-xl text-green-700 dark:text-green-300">
+        Personalized Carbon Reduction Tips
+      </CardTitle>
+    </CardHeader>
+    <CardContent className="pt-6">
+      {tipsLoading ? (
+        <div className="animate-pulse text-gray-500 dark:text-gray-400">Generating tips...</div>
+      ) : tipsData ? (
+        <div>
+          <ul className="list-disc pl-6 space-y-2 text-green-800 dark:text-green-300">
+            {tipsData.reductionTips.map((tip, i) => (
+              <li key={i}>{tip}</li>
+            ))}
+          </ul>
+          <p className="mt-4 italic text-sm text-gray-600 dark:text-gray-400">
+            {tipsData.impactSummary}
+          </p>
+        </div>
+      ) : (
+        <p className="text-gray-500 dark:text-gray-400">No tips available yet.</p>
+      )}
+    </CardContent>
+  </Card>
+)}
         {/* Action buttons */}
         <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
           <Button 

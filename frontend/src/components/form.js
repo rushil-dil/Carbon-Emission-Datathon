@@ -159,6 +159,7 @@ export function CarbonSurveyForm() {
     if (response) {
       // Cache the response data
       localStorage.setItem('surveyResponse', JSON.stringify(response));
+      
       // Redirect to the response page
       router.push(`/response`);
     }
@@ -196,6 +197,7 @@ export function CarbonSurveyForm() {
   };
 
   const handleSubmit = async () => {
+    console.log('submitting and caching answers', answers)
     localStorage.setItem("carbonSurveyAnswers", JSON.stringify(answers));
 
   // Submit to backend (assuming submitSurvey is your API call)

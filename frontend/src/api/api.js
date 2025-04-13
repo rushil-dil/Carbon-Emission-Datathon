@@ -1,11 +1,14 @@
 import { useState } from "react";
 
+import { CohereClientV2 } from 'cohere-ai';
+
+
+const API_URL = "http://127.0.0.1:5000";
 const useSubmitSurvey = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [response, setResponse] = useState(null);
-  const API_URL = "http://127.0.0.1:5000";
-  
+ 
   const submitSurvey = async (data) => {
     console.log('Submitting survey data:', data);
     setIsLoading(true);
@@ -49,4 +52,38 @@ const useSubmitSurvey = () => {
   };
 };
 
+
 export default useSubmitSurvey;
+
+const cohere = new CohereClientV2({
+    token: process.env.NEXT_PUBLIC_COHERE,
+  });
+export function useCohereGenerate() {
+  const [loading, setLoading] = useState(false);
+  const [output, setOutput] = useState(null);
+
+  const generateTips = async (prompt) => {
+    setLoading(true);
+    try {
+      const response = await cohere.generate({
+        model: 'command-r-plus',
+        prompt,
+        max_tokens: 300,
+        temperature: 0.7,
+        stop_sequences: ["\n\n"],
+      });
+
+      const text = response.generations[0].text;
+      console.log(text)
+      const parsed = JSON.parse(text); // assumes Cohere returns valid JSON
+      setOutput(parsed);
+      return parsed;
+    } catch (err) {
+      console.error('Cohere generation error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { generateTips, output, loading };
+}

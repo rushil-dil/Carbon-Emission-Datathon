@@ -7,7 +7,7 @@ import joblib
 
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 def get_prediction(model, input_dict):
     input_data = [[input_dict[key] for key in input_dict]]
