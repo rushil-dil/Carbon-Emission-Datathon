@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { HeroHighlight, Highlight } from './hero';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, ComposedChart, ReferenceLine, ReferenceArea } from 'recharts';
 import { useCohereGenerate } from '@/api/api';
+import { useBreakdownPie } from '@/api/api';
 const getIntervalForValue = (value) => {
   const intervals = [
     [0, 900],
@@ -36,6 +37,12 @@ export function CarbonFootprintDashboard() {
   const [answerData, setAnswerData] = useState(null);
   const [graphData, setGraphData] = useState(null);
   const { generateTips, output: tipsData, loading: tipsLoading } = useCohereGenerate();
+  const [breakdownData, setBreakdownData] = useState([]);
+  const [jsonifiedBreakdown, setJsonifiedBreakdown] = useState(null);
+
+  const { submitBreakdown, isLoading: breakLoading, error, response} = useBreakdownPie();
+
+
 
   const router = useRouter();
   
@@ -77,8 +84,24 @@ export function CarbonFootprintDashboard() {
   useEffect(() => {
     if (answerData && Object.keys(answerData).length > 0) {
       console.log('Updated answerData: ', answerData);
+      submitBreakdown(answerData)
     }
+    
+   
   }, [answerData]);
+  useEffect(() => {
+    if (response && Object.keys(response).length > 0) {
+      console.log("breakdown response: ", response);
+      
+      // Convert the JSON response to an array of {name, value} objects
+      const breakdownArray = Object.keys(response).map(key => ({
+        name: key,
+        value: parseFloat(response[key]) || 0
+      }));
+      
+      setBreakdownData(breakdownArray);
+    }
+  }, [response]);
 
 
 useEffect(() => {
@@ -92,7 +115,7 @@ useEffect(() => {
   Based on this data, generate 5 personalized carbon footprint reduction tips as a list of strings, and provide a short summary sentence about the potential impact.
   
   Output the result as JSON with this format. (MAKE SURE TO STRICTLY FOLLOW The format with braces, and strings, needs to be a valid string):
-  {
+  
     "reductionTips": [ ... ],
     "impactSummary": "..."
   }
@@ -115,7 +138,6 @@ useEffect(() => {
             shopping: 622,
           },
           comparison: responseData.comparison || {
-            nationalAvg: 6200,
             globalAvg: 4600,
           },
         };
@@ -130,6 +152,7 @@ useEffect(() => {
         setIsLoading(false);
     }
   }, [responseData]);
+
 
   if (isLoading) {
     return (
@@ -177,16 +200,11 @@ useEffect(() => {
     { range: '8100-9000', count: 1 },
   ];
 
-  const breakdownData = [
-    { name: 'Transportation', value: graphData.breakdown.transportation },
-    { name: 'Energy', value: graphData.breakdown.energy },
-    { name: 'Food', value: graphData.breakdown.food },
-    { name: 'Shopping', value: graphData.breakdown.shopping },
-  ];
+
 
   const comparisonData = [
     { name: 'Your Footprint', value: graphData.result },
-    { name: 'National Avg', value: graphData.comparison.nationalAvg },
+
     { name: 'Global Avg', value: graphData.comparison.globalAvg },
   ];
   
@@ -257,7 +275,7 @@ useEffect(() => {
             </CardHeader>
             <CardContent className="pt-6">
               <p className="mb-4 text-gray-600 dark:text-gray-400">
-                Your carbon footprint over the last few months shows a steady decrease. Keep up the good work!
+                Compare your carbon usage with others!
               </p>
               <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height={300}>
@@ -370,7 +388,7 @@ useEffect(() => {
               <div className="mt-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-md border border-green-200 dark:border-green-800">
                 <h3 className="text-lg font-medium text-green-700 dark:text-green-300 mb-2">Your Standing</h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Your footprint is <span className="font-semibold text-green-600 dark:text-green-400">21% lower</span> than the national average and <span className="font-semibold text-green-600 dark:text-green-400">6% higher</span> than the global average.
+                  Your footprint is <span className="font-semibold text-green-600 dark:text-green-400">{((graphData.result / 4600) * 100).toFixed(2) }%</span> the national average!!
                 </p>
               </div>
             </CardContent>
@@ -412,24 +430,7 @@ useEffect(() => {
           >
             Take Survey Again
           </Button>
-          <Button
-            onClick={() => {
-              console.log('Downloading report');
-            }}
-            variant="outline"
-            className="border-green-300 text-green-700 hover:bg-green-50 dark:border-green-800 dark:text-green-400 dark:hover:bg-green-900/30"
-          >
-            Download Full Report
-          </Button>
-          <Button
-            onClick={() => {
-              console.log('Set reduction goals');
-            }}
-            variant="outline"
-            className="border-green-300 text-green-700 hover:bg-green-50 dark:border-green-800 dark:text-green-400 dark:hover:bg-green-900/30"
-          >
-            Set Reduction Goals
-          </Button>
+          
         </div>
       </div>
     </div>

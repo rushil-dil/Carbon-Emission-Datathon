@@ -16,7 +16,7 @@ const useSubmitSurvey = () => {
     
     try {
       console.log('Making API request to:', API_URL + '/submit');
-      const res = await fetch(API_URL + '/submit', {
+      const res = await fetch("http://127.0.0.1:5000" + '/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -87,3 +87,52 @@ export function useCohereGenerate() {
 
   return { generateTips, output, loading };
 }
+
+
+export function useBreakdownPie()  {
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [response, setResponse] = useState(null);
+   
+    const submitBreakdown = async (data) => {
+      console.log('Submitting breakdown data:', data);
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        console.log('Making API request to:', API_URL + '/breakdown');
+        const res = await fetch("http://127.0.0.1:5000" + '/breakdown', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+        
+        console.log('API breakdown status:', res.status);
+        
+        if (!res.ok) {
+          throw new Error(`Failed to submit form: ${res.status} ${res.statusText}`);
+        }
+        
+        const result = await res.json();
+        console.log('API breakdown data:', result);
+        
+        setResponse(result);
+        return result; // Return the result so it can be used in the submit handler
+      } catch (err) {
+        console.error('API error:', err);
+        setError(err.message || 'Something went wrong');
+        throw err; // Re-throw to handle in the component
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    return {
+      submitBreakdown,
+      isLoading,
+      error,
+      response,
+    };
+  };
