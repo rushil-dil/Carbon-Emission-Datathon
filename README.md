@@ -1,4 +1,4 @@
-# Carbon-Emission-Datathon
+# Carbon-IQ-Datathon
 
 Project made for Irvine Datathon 2025 with Rushil Dileep, Pranav Batra, and Sumanth Pallamreddy.
 
@@ -13,7 +13,6 @@ We used Next.js for the frontend and used Flask for the backend. We also used a 
 1. Install dependencies using this command: 'pip install -r requirements.txt'
 2. Download Node.js by using: 'cd frontend', then 'npm install'
 3. Run the frontend server by using this command: 'npm run dev'
-
 
 
 ## Hosted Link
