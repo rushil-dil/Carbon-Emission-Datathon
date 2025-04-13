@@ -196,11 +196,14 @@ export function CarbonSurveyForm() {
   };
 
   const handleSubmit = async () => {
-    toast.promise(submitSurvey(answers), {
-      loading: 'Calculating your environmental impact...',
-      success: 'Analysis complete!',
-      error: 'Something went wrong. Please try again.'
-    });
+    localStorage.setItem("carbonSurveyAnswers", JSON.stringify(answers));
+
+  // Submit to backend (assuming submitSurvey is your API call)
+  toast.promise(submitSurvey(answers), {
+    loading: 'Calculating your environmental impact...',
+    success: 'Analysis complete!',
+    error: 'Something went wrong. Please try again.',
+  });
   };
 
   const toggleInsight = () => {
