@@ -10,9 +10,9 @@ We used Next.js for the frontend and used Flask for the backend. We also used a 
 
 ## How to Run
 
-1. Install dependencies using this command: 'pip install -r requirements.txt'
-2. Download Node.js by using: 'cd frontend', then 'npm install'
-3. Run the frontend server by using this command: 'npm run dev'
+1. Install dependencies using this command: `pip install -r requirements.txt`
+2. Download Node.js by using: `cd frontend`, then `npm install`
+3. Run the frontend server by using this command: `npm run dev`
 
 
 ## Hosted Link
