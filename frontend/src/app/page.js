@@ -75,12 +75,7 @@ export default function Home() {
           </div>
           
           <div className="mt-12 text-center">
-            <button
-              onClick={navigateToForm}
-              className="px-6 py-3 bg-green-600 text-white rounded-lg font-medium shadow-lg hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-            >
-              Get Started Now
-            </button>
+           
           </div>
         </div>
       </section>

@@ -5,8 +5,13 @@ import pandas as pd
 import joblib
 
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 8e5ed06074f56ac307798553453c536ca7d38943
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app)
 
 def get_prediction(model, input_dict):
     input_data = [[input_dict[key] for key in input_dict]]
@@ -43,12 +48,17 @@ def submit():
 
 @app.route('/breakdown', methods=['POST'])
 def breakdown():
-    data = request.get_json()
-    electricity = data['tvPcDailyHour'] * 0.81 * 30
-    shopping = data['newClothesMonthly'] * 7
-    transportation = transportation_details(data['vehicleDistance'], data['vehicleType'])
+    data =  request.get_json(force = True)
+    print(f'data is {data}')
+    # print(f'data input is {data['tvPcDailyHour']}')
+    # print(type(data['tvPcDailyHour']))
+    electricity = int(data['tvPcDailyHour'])
+    ##print(f'electricity is {electricity}')
+    electricity = electricity * 0.81 * 30
+    shopping = int(data['newClothesMonthly']) * 7
+    transportation = transportation_details(int(data['vehicleDistance']), data['vehicleType'])
     
-    food = data['monthlyGroceryBill'] * 0.1
+    food = int(data['monthlyGroceryBill']) * 0.1
     return jsonify({'electricity': electricity, 'shopping': shopping, 'transportation': transportation, 'food': food})
 
 if __name__ == '__main__':
