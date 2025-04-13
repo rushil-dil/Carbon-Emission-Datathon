@@ -101,7 +101,7 @@ export function useBreakdownPie()  {
       
       try {
         console.log('Making API request to:', API_URL + '/breakdown');
-        const res = await fetch("https://carbon-iq-191f1496b345.herokuapp.com/" + '/breakdown', {
+        const res = await fetch("https://carbon-iq-191f1496b345.herokuapp.com" + '/breakdown', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
