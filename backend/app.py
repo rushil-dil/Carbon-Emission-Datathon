@@ -10,26 +10,21 @@ app = Flask(__name__)
 CORS(app)
 
 def get_prediction(model, input_dict):
-    input_data = [input_dict[key] for key in input_dict]
+    input_data = [[input_dict[key] for key in input_dict]]
+    print(input_data)
     prediction = model.predict(input_data)[0]
-
-    return prediction
-
-model = joblib.load('/Users/rushildileep/Documents/Carbon-Emission-Datathon/data/gradboostreg_carbon.joblib')
-
+    return float("{:.2f}".format(prediction))
 
 
 @app.route('/submit', methods=['POST'])
 def submit():
     # data is json given from frontend
     data = request.get_json()
+    processed_data = processing(data)
+    model = joblib.load('/Users/rushildileep/Documents/Carbon-Emission-Datathon/data/gbr_tuned.joblib')
+    prediction = get_prediction(model, processed_data)
 
-    # use model here
-    # possible preprocess the model here
-
-    # send a json file back to frontend with json received + extra data
-
-    return jsonify({"result": 12})
+    return jsonify({"result": prediction})
 
 
 @app.route('/emission_estimate', methods=['POST'])

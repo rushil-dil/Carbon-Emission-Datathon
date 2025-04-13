@@ -26,16 +26,16 @@ sample_user_data = {
 
 category_encodings = {
     "bodyType": {'underweight': 0, 'normal': 1, 'overweight': 2, 'obese': 3},
-    "sex": {'male': 0, 'female': 1, 'other': 2},
-    "diet": {'vegan': 0, 'vegetarian': 1, 'omnivore': 2},
+    "sex": {'male': 0, 'female': 1},
+    "diet": {'vegan': 0, 'vegetarian': 1, 'pescatarian': 2, 'omnivore': 3},
     "shower": {'less frequently': 0, 'more frequently': 1, 'daily': 2, 'twice a day': 3},
     "heatingSource": {'electricity': 0, 'wood': 1, 'natural gas': 2, 'coal': 3},
     "transport": {'walk/bicycle': 0, 'public': 1, 'private': 2},
     "vehicleType": {'none': 0, 'electric': 1, 'hybrid': 2, 'lpg': 3, 'petrol': 4, 'diesel': 5},
-    "socialActivity": {'never': 0, 'sometimes': 1, 'moderate': 2, 'often': 3},
+    "socialActivity": {'never': 0, 'sometimes': 1, 'often': 2, 'very frequently': 3},
     "airTravelFrequency": {'never': 0, 'rarely': 1, 'sometimes': 2, 'frequently': 3, 'very frequently': 4},
     "wasteBagSize": {'small': 0, 'medium': 1, 'large': 2, 'extra large': 3},
-    "energyEfficiency": {'Yes': 0, 'Sometimes': 1, 'Standard': 2, 'No': 3},
+    "energyEfficiency": {'Yes': 0, 'Sometimes': 1, 'No': 2},
 }
 
 def processing(user_data):
@@ -57,11 +57,10 @@ if __name__ == '__main__':
     print(f'data is {data}')
     input_data = [[data[key] for key in data.keys()]]
     print(f'input_data: {input_data}')
-    model = joblib.load('/Users/rushildileep/Documents/Carbon-Emission-Datathon/data/gradboostreg_carbon.joblib')
+    model = joblib.load('/Users/rushildileep/Documents/Carbon-Emission-Datathon/data/gbr_tuned.joblib')
     prediction = model.predict(input_data)[0]
     print(prediction)
     
 
 
 
-#8377, 9000/10
