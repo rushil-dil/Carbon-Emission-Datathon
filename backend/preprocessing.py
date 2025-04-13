@@ -57,7 +57,7 @@ if __name__ == '__main__':
     print(f'data is {data}')
     input_data = [[data[key] for key in data.keys()]]
     print(f'input_data: {input_data}')
-    model = joblib.load('/Users/rushildileep/Documents/Carbon-Emission-Datathon/data/gbr_tuned.joblib')
+    model = joblib.load('../data/gbr_tuned.joblib')
     prediction = model.predict(input_data)[0]
     print(prediction)
     

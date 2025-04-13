@@ -21,7 +21,7 @@ def submit():
     # data is json given from frontend
     data = request.get_json()
     processed_data = processing(data)
-    model = joblib.load('/Users/rushildileep/Documents/Carbon-Emission-Datathon/data/gbr_tuned.joblib')
+    model = joblib.load('../data/gbr_tuned.joblib')
     prediction = get_prediction(model, processed_data)
 
     return jsonify({"result": prediction})
