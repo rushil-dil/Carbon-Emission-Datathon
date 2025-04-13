@@ -32,7 +32,9 @@ def transportation_details(distance, v_type):
         case 'lpg':
             return 0.21*distance
         
-
+@app.route('/')
+def home():
+    return jsonify({'Welcome to home': 'hihi'})
 @app.route('/submit', methods=['POST'])
 def submit():
     # data is json given from frontend
