@@ -204,7 +204,6 @@ useEffect(() => {
 
   const comparisonData = [
     { name: 'Your Footprint', value: graphData.result },
-
     { name: 'Global Avg', value: graphData.comparison.globalAvg },
   ];
   
@@ -221,7 +220,7 @@ useEffect(() => {
             <CardTitle className="text-2xl text-green-700 dark:text-green-300 flex justify-between items-center">
               <span>Your Carbon Footprint Dashboard</span>
               <span className="text-lg font-normal text-green-600 dark:text-green-400">
-                Last Updated: May 2025
+                Last Updated: April 2025
               </span>
             </CardTitle>
           </CardHeader>
@@ -353,9 +352,6 @@ useEffect(() => {
                       </li>
                     ))}
                   </ul>
-                  <p className="mt-6 text-sm text-gray-600 dark:text-gray-400">
-                    Transportation and energy usage are your largest sources of carbon emissions. Consider focusing your reduction efforts in these areas.
-                  </p>
                 </div>
               </div>
             </CardContent>
@@ -369,7 +365,7 @@ useEffect(() => {
             </CardHeader>
             <CardContent className="pt-6">
               <p className="mb-4 text-gray-600 dark:text-gray-400">
-                See how your carbon footprint compares to national and global averages.
+                See how your carbon footprint compares to the global average.
               </p>
               <div className="h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%">
@@ -388,7 +384,7 @@ useEffect(() => {
               <div className="mt-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-md border border-green-200 dark:border-green-800">
                 <h3 className="text-lg font-medium text-green-700 dark:text-green-300 mb-2">Your Standing</h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Your footprint is <span className="font-semibold text-green-600 dark:text-green-400">{((graphData.result / 4600) * 100).toFixed(2) }%</span> the national average!!
+                  Your footprint is <span className="font-semibold text-green-600 dark:text-green-400">{((graphData.result / 4600) * 100).toFixed(2) }%</span> the global average!!
                 </p>
               </div>
             </CardContent>
