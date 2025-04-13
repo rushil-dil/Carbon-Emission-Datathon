@@ -16,7 +16,7 @@ const useSubmitSurvey = () => {
     
     try {
       console.log('Making API request to:', API_URL + '/submit');
-      const res = await fetch(API_URL + '/submit', {
+      const res = await fetch("https://carbon-iq-191f1496b345.herokuapp.com/" + '/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
